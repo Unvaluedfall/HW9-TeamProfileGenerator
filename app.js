@@ -55,8 +55,8 @@ function promptUserEngineer() {
     },
     {
         type:"input",
-        name:"titleEngineer",
-        message:"Whats your Job title"
+        name:"emailEngineer",
+        message:"Whats your Email?"
     },
     {
         type:"input",
@@ -80,8 +80,8 @@ function promptUserIntern() {
     },
     {
         type:"input",
-        name:"titleIntern",
-        message:"Whats your Job title"
+        name:"emailIntern",
+        message:"Whats your Email?"
     },
     {
         type:"input",
@@ -106,7 +106,7 @@ function populateHTML(manager, engineer, intern){
             <div class="uk-card-header">
                 <div class="uk-grid-small uk-flex-middle" uk-grid>
                     <div class="uk-width-auto">
-                        <span uk-icon="icon: heart"></span>
+                        <span uk-icon="icon: user"></span>
                     </div>
                     <div class="uk-width-expand">
                         <h3 class="uk-card-title uk-margin-remove-bottom">${manager.name}</h3>
@@ -116,21 +116,31 @@ function populateHTML(manager, engineer, intern){
             </div>
             <div class="uk-card-body uk-background-muted">
                 <p>ID: ${manager.id}</p>
-                <p>Email:<a>Jordons</a></p>
-                <p>Office Number: 101</p>                           
+                <p>Email:<a>${manager.email}</a></p>
+                <p>Office Number: ${manager.officeNumber}</p>                           
             </div>
         </div>
     </div>`
 
     for(var i = 0; i < engineer.length; i++){
         empty = `
-        <div>
-            <div class="uk-card uk-card-defualt uk-card-hover uk-card-body">
-                <h3 class="uk-card-title">${engineer[i].name}</h3>
-                <div class="uk-card-body>
+        <div> 
+            <div class="uk-card uk-card-default">
+                <div class="uk-card-header">
+                    <div class="uk-grid-small uk-flex-middle" uk-grid>
+                        <div class="uk-width-auto">
+                            <span uk-icon="icon: cog"></span>
+                        </div>
+                        <div class="uk-width-expand">
+                            <h3 class="uk-card-title uk-margin-remove-bottom">${engineer[i].name}</h3>
+                            <p class="uk-text-meta uk-margin-remove-top">${engineer[i].getRole()}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-card-body uk-background-muted">
                     <p>ID: ${engineer[i].id}</p>
-                    <p>Email: ${engineer[i].email}</p>
-                    <p>GitHub: ${engineer[i].github}</p>
+                    <p>Email: <a>${engineer[i].email}</a></p>
+                    <p>GitHub: ${engineer[i].github}</p>                           
                 </div>
             </div>
         </div>`
@@ -139,13 +149,23 @@ function populateHTML(manager, engineer, intern){
 
     for(var i = 0; i < intern.length; i++){
         empty = `
-        <div>
-            <div class="uk-card uk-card-defualt uk-card-hover uk-card-body">
-                <h3 class="uk-card-title">${intern[i].name}</h3>
-                <div class="uk-card-body>
+        <div> 
+            <div class="uk-card uk-card-default">
+                <div class="uk-card-header">
+                    <div class="uk-grid-small uk-flex-middle" uk-grid>
+                        <div class="uk-width-auto">
+                            <span uk-icon="icon: users"></span>
+                        </div>
+                        <div class="uk-width-expand">
+                            <h3 class="uk-card-title uk-margin-remove-bottom">${intern[i].name}</h3>
+                            <p class="uk-text-meta uk-margin-remove-top">${intern[i].getRole()}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-card-body uk-background-muted">
                     <p>ID: ${intern[i].id}</p>
-                    <p>Email: ${intern[i].email}</p>
-                    <p>GitHub: ${intern[i].github}</p>
+                    <p>Email: <a>${intern[i].email}</a></p>
+                    <p>School: ${intern[i].school}</p>                           
                 </div>
             </div>
         </div>`
@@ -183,7 +203,11 @@ function populateHTML(manager, engineer, intern){
         + bodyManager 
         + bodyEngineer 
         + bodyIntern 
-        +`</div></div></div></body></html>`
+        +`</div>
+        </div>
+        </div>
+    </body>
+</html>`
 }
 
 function writeHTML(newHTML){
@@ -200,13 +224,13 @@ async function init(){
     
     const promptManager = await promptUserManager()
 
-    const newManager = new Manager(promptManager.nameManager, promptManager.idManager, promptManager.titleManager, promptManager.officeNumberManager)
+    const newManager = new Manager(promptManager.nameManager, promptManager.idManager, promptManager.emailManager, promptManager.officeNumberManager)
     
     if(!/[a-z]/i.test(promptManager.memberCountEngineer) === true){
         for(var i = 0; i < promptManager.memberCountEngineer; i++){
             const promptEngineer = await promptUserEngineer()
             
-            newEngineers.push(new Engineer(promptEngineer.nameEngineer, promptEngineer.idEngineer, promptEngineer.titleEngineer, promptEngineer.githubEngineer));
+            newEngineers.push(new Engineer(promptEngineer.nameEngineer, promptEngineer.idEngineer, promptEngineer.emailEngineer, promptEngineer.githubEngineer));
             
         }
     } else {
@@ -216,7 +240,7 @@ async function init(){
     if(!/[a-z]/i.test(promptManager.memberCountIntern) === true){
         for(var i = 0; i < promptManager.memberCountIntern; i++){
             const promptIntern = await promptUserIntern()
-            newInterns.push(new Intern(promptIntern.nameIntern, promptIntern.idIntern, promptIntern.titleIntern, promptIntern.schoolIntern))    
+            newInterns.push(new Intern(promptIntern.nameIntern, promptIntern.idIntern, promptIntern.emailIntern, promptIntern.schoolIntern))    
         }
     } else {
         console.log("wrong")

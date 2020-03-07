@@ -20,8 +20,8 @@ function promptUserManager() {
         },
         {
             type:"input",
-            name:"titleManager",
-            message:"Whats your Job title"
+            name:"emailManager",
+            message:"Whats your Email?"
         },
         {
             type:"input",
@@ -88,38 +88,144 @@ function promptUserIntern() {
         name:"schoolIntern",
         message:"Whats your School?"
     }
-    ])
+])
 }
+
+function populateHTML(manager, engineer, intern){
+    console.log(manager)
+    // console.log(engineer)
+    console.log(intern)
+    
+    let empty = ` `;
+    let bodyEngineer = ` `;
+    let bodyIntern = ` `;
+    
+    let bodyManager = `
+    <div> 
+        <div class="uk-card uk-card-default">
+            <div class="uk-card-header">
+                <div class="uk-grid-small uk-flex-middle" uk-grid>
+                    <div class="uk-width-auto">
+                        <span uk-icon="icon: heart"></span>
+                    </div>
+                    <div class="uk-width-expand">
+                        <h3 class="uk-card-title uk-margin-remove-bottom">${manager.name}</h3>
+                        <p class="uk-text-meta uk-margin-remove-top">${manager.getRole()}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-card-body uk-background-muted">
+                <p>ID: ${manager.id}</p>
+                <p>Email:<a>Jordons</a></p>
+                <p>Office Number: 101</p>                           
+            </div>
+        </div>
+    </div>`
+
+    for(var i = 0; i < engineer.length; i++){
+        empty = `
+        <div>
+            <div class="uk-card uk-card-defualt uk-card-hover uk-card-body">
+                <h3 class="uk-card-title">${engineer[i].name}</h3>
+                <div class="uk-card-body>
+                    <p>ID: ${engineer[i].id}</p>
+                    <p>Email: ${engineer[i].email}</p>
+                    <p>GitHub: ${engineer[i].github}</p>
+                </div>
+            </div>
+        </div>`
+        bodyEngineer += empty;
+    }
+
+    for(var i = 0; i < intern.length; i++){
+        empty = `
+        <div>
+            <div class="uk-card uk-card-defualt uk-card-hover uk-card-body">
+                <h3 class="uk-card-title">${intern[i].name}</h3>
+                <div class="uk-card-body>
+                    <p>ID: ${intern[i].id}</p>
+                    <p>Email: ${intern[i].email}</p>
+                    <p>GitHub: ${intern[i].github}</p>
+                </div>
+            </div>
+        </div>`
+        bodyIntern += empty;
+    }
+
+    return `
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Page</title>
+
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.3.3/dist/css/uikit.min.css" />
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.3.3/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.3.3/dist/js/uikit-icons.min.js"></script>
+
+    </head>
+    <body>
+        <nav class="uk-navbar-container" uk-navbar>
+            <div class="uk-navbar-center">
+                <ul class="uk-navbar-nav">
+                    <li class="uk-active"><h1>Team Page</h1></li>
+                </ul>
+            </div>
+        </nav>
+        
+        <div class="uk-section">
+            <div class="uk-container-large">
+                <div class="uk-child-width-1-4@s uk-grid-match" uk-grid>`
+        + bodyManager 
+        + bodyEngineer 
+        + bodyIntern 
+        +`</div></div></div></body></html>`
+}
+
+function writeHTML(newHTML){
+    fs.writeFile("./output/teampage.html", newHTML, "utf8", (err) => {
+        if (err) throw err;
+        console.log('The file has been saved!');
+      });
+}
+
 
 async function init(){
     const newEngineers = []
     const newInterns = []
     
-    
     const promptManager = await promptUserManager()
 
     const newManager = new Manager(promptManager.nameManager, promptManager.idManager, promptManager.titleManager, promptManager.officeNumberManager)
-
-    console.log(newManager)
-
     
-    
-    for(var i = 0; i < promptManager.memberCountEngineer; i++){
-        const promptEngineer = await promptUserEngineer()
-    
-
-        newEngineers.push(new Engineer(promptEngineer.nameEngineer, promptEngineer.idEngineer, promptEngineer.titleEngineer, promptEngineer.githubEngineer))
+    if(!/[a-z]/i.test(promptManager.memberCountEngineer) === true){
+        for(var i = 0; i < promptManager.memberCountEngineer; i++){
+            const promptEngineer = await promptUserEngineer()
+            
+            newEngineers.push(new Engineer(promptEngineer.nameEngineer, promptEngineer.idEngineer, promptEngineer.titleEngineer, promptEngineer.githubEngineer));
+            
+        }
+    } else {
+        console.log("wrong")
     }
-    console.log(newEngineers)
-
-    for(var i = 0; i < promptManager.memberCountIntern; i++){
-        const promptIntern = await promptUserIntern()
-
-        newInterns.push(new Intern(promptIntern.nameIntern, promptIntern.idIntern, promptIntern.titleIntern, promptIntern.schoolIntern))
+    
+    if(!/[a-z]/i.test(promptManager.memberCountIntern) === true){
+        for(var i = 0; i < promptManager.memberCountIntern; i++){
+            const promptIntern = await promptUserIntern()
+            newInterns.push(new Intern(promptIntern.nameIntern, promptIntern.idIntern, promptIntern.titleIntern, promptIntern.schoolIntern))    
+        }
+    } else {
+        console.log("wrong")
     }
 
-    console.log(newInterns)
 
+    const newHTML = populateHTML(newManager, newEngineers, newInterns)
+
+    writeHTML(newHTML)
 }
 
 init()
